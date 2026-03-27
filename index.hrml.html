@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оценочный тест</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F5F0;
+  --surface: #FDFCF9;
+  --ink: #1A1814;
+  --ink2: #5A5650;
+  --ink3: #9A9690;
+  --accent: #2D5A3D;
+  --line: #E2DDD6;
+  --v: #4A3F7A;
+  --a: #2D5A3D;
+  --s: #7A3A2A;
+}
+body {
+  font-family: 'Spectral', Georgia, serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+.wrap { width: 100%; max-width: 620px; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* INTRO */
+.intro-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--ink3);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.intro-title {
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1.25;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+.intro-desc {
+  font-size: 16px;
+  color: var(--ink2);
+  line-height: 1.75;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+.blocks-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+.block-card {
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+.block-card .bt { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.block-card .bd { font-size: 12px; color: var(--ink3); line-height: 1.5; }
+
+.fio-label { font-size: 13px; color: var(--ink2); margin-bottom: 8px; font-weight: 400; }
+.fio-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'Spectral', serif;
+  font-size: 15px;
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  outline: none;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.15s;
+}
+.fio-input:focus { border-color: var(--accent); }
+.fio-input::placeholder { color: var(--ink3); }
+
+.btn-start {
+  display: inline-block;
+  padding: 13px 32px;
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Spectral', serif;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.01em;
+}
+.btn-start:hover { background: #333; }
+.btn-start:disabled { background: var(--ink3); cursor: default; }
+
+/* TEST */
+.progress-wrap { margin-bottom: 1.75rem; }
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+  margin-bottom: 6px;
+}
+.progress-track {
+  height: 2px;
+  background: var(--line);
+  border-radius: 1px;
+}
+.progress-fill {
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+.section-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+.tag-v { background: #EEEAF8; color: var(--v); }
+.tag-a { background: #E4F0E8; color: var(--a); }
+.tag-s { background: #F5EAE7; color: var(--s); }
+
+.q-text {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.75rem; }
+.opt {
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 8px;
+  padding: 13px 16px;
+  font-family: 'Spectral', serif;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.opt:hover { border-color: #aaa; background: #F9F8F5; }
+.opt.selected { border-color: var(--accent); background: #EEF5F0; color: var(--accent); }
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-nav {
+  padding: 10px 22px;
+  font-family: 'Spectral', serif;
+  font-size: 14px;
+  background: transparent;
+  border: 0.5px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn-nav:hover { background: var(--surface); border-color: #aaa; }
+.btn-nav:disabled { opacity: 0.3; cursor: default; }
+.btn-nav.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn-nav.primary:hover { background: #333; }
+
+/* SAVING */
+.saving-wrap { text-align: center; padding: 3rem 0; }
+.saving-title { font-size: 22px; font-weight: 300; margin-bottom: 1rem; }
+.saving-sub { font-size: 14px; color: var(--ink3); }
+.spinner {
+  width: 32px; height: 32px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 1.5rem auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* DONE */
+.done-wrap { text-align: center; padding: 2rem 0; }
+.done-icon {
+  width: 56px; height: 56px;
+  background: #EEF5F0;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 24px;
+}
+.done-title { font-size: 26px; font-weight: 300; margin-bottom: 0.75rem; }
+.done-sub { font-size: 15px; color: var(--ink2); line-height: 1.7; font-weight: 300; }
+
+/* RESULTS PANEL */
+.panel-title { font-size: 26px; font-weight: 300; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+.panel-fio { font-size: 14px; color: var(--ink3); margin-bottom: 2rem; font-family: 'JetBrains Mono', monospace; }
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 1.25rem;
+}
+.total-left .tl { font-size: 12px; color: var(--ink3); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.total-left .tv { font-size: 36px; font-weight: 300; letter-spacing: -0.03em; }
+.total-right .tr { font-size: 12px; color: var(--ink3); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; text-align: right; }
+.total-right .tl2 { font-size: 18px; font-weight: 400; text-align: right; }
+
+.verdict-box {
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 1.25rem;
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.block-result {
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.br-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+}
+.br-title { font-size: 14px; font-weight: 500; }
+.br-pct { font-size: 18px; font-weight: 400; }
+.br-bar { height: 3px; background: var(--line); }
+.br-fill { height: 3px; }
+.br-body { padding: 12px 16px; font-size: 13px; color: var(--ink2); line-height: 1.65; font-weight: 300; }
+
+.incon-block { margin-top: 1.25rem; }
+.incon-title { font-size: 12px; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink3); margin-bottom: 8px; }
+.incon-item {
+  font-size: 13px;
+  color: #7A3A2A;
+  background: #F5EAE7;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.pwd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(247,245,240,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.pwd-box {
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+.pwd-box h3 { font-size: 18px; font-weight: 400; margin-bottom: 0.5rem; }
+.pwd-box p { font-size: 13px; color: var(--ink3); margin-bottom: 1.5rem; }
+.pwd-input {
+  width: 100%;
+  padding: 11px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  letter-spacing: 0.15em;
+  background: var(--bg);
+  border: 0.5px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  outline: none;
+  margin-bottom: 12px;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.pwd-input:focus { border-color: var(--accent); }
+.pwd-error { font-size: 12px; color: #7A3A2A; margin-bottom: 10px; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- INTRO -->
+  <div id="screen-intro" class="screen active">
+    <p class="intro-eyebrow">Профессиональная оценка</p>
+    <h1 class="intro-title" id="intro-title">Тест для HR‑специалиста</h1>
+    <p class="intro-desc" id="intro-desc">75 вопросов на основе принципов Рэя Далио. Нет правильных и неправильных ответов — только честные.</p>
+    <div class="blocks-row" id="blocks-row">
+      <div class="block-card" style="border-left: 2px solid var(--v);">
+        <div class="bt" style="color:var(--v)">Ценности</div>
+        <div class="bd">Этика и принципы в работе</div>
+      </div>
+      <div class="block-card" style="border-left: 2px solid var(--a);">
+        <div class="bt" style="color:var(--a)">Способности</div>
+        <div class="bd">Мышление и обучаемость</div>
+      </div>
+      <div class="block-card" style="border-left: 2px solid var(--s);">
+        <div class="bt" style="color:var(--s)">Навыки</div>
+        <div class="bd">Практика HR</div>
+      </div>
+    </div>
+    <p class="fio-label">Ваше ФИО</p>
+    <input type="text" class="fio-input" id="fio-input" placeholder="Иванова Анна Сергеевна" oninput="checkFio()">
+    <br>
+    <button class="btn-start" id="btn-start" onclick="startTest()" disabled>Начать тест →</button>
+  </div>
+
+  <!-- TEST -->
+  <div id="screen-test" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="q-label">Загрузка теста...</span>
+        <span id="q-section-text"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+    <span class="section-tag" id="section-tag"></span>
+    <p class="q-text" id="q-text"></p>
+    <div class="options" id="options"></div>
+    <div class="nav-row">
+      <button class="btn-nav" id="btn-prev" onclick="prevQ()">← Назад</button>
+      <button class="btn-nav primary" id="btn-next" onclick="nextQ()">Далее →</button>
+    </div>
+  </div>
+
+  <!-- SAVING -->
+  <div id="screen-saving" class="screen">
+    <div class="saving-wrap">
+      <div class="spinner"></div>
+      <p class="saving-title">Сохраняем результаты...</p>
+      <p class="saving-sub">Пожалуйста, не закрывайте страницу</p>
+    </div>
+  </div>
+
+  <!-- DONE -->
+  <div id="screen-done" class="screen">
+    <div class="done-wrap">
+      <div class="done-icon">✓</div>
+      <h2 class="done-title">Тест завершён</h2>
+      <p class="done-sub">Благодарим за участие.<br>Результаты переданы HR-специалисту.</p>
+    </div>
+  </div>
+
+  <!-- RESULTS (HR only) -->
+  <div id="screen-results" class="screen">
+    <div id="pwd-overlay" class="pwd-overlay">
+      <div class="pwd-box">
+        <h3>Доступ к результатам</h3>
+        <p>Введите пароль для просмотра отчёта</p>
+        <input type="password" class="pwd-input" id="pwd-input" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+        <p class="pwd-error" id="pwd-error"></p>
+        <button class="btn-start" onclick="checkPwd()">Открыть отчёт</button>
+      </div>
+    </div>
+    <p class="panel-fio" id="res-fio"></p>
+    <h2 class="panel-title">Профиль кандидата</h2>
+    <div class="total-row">
+      <div class="total-left">
+        <div class="tl">Общий балл</div>
+        <div class="tv" id="res-total"></div>
+      </div>
+      <div class="total-right">
+        <div class="tr">Уровень</div>
+        <div class="tl2" id="res-level"></div>
+      </div>
+    </div>
+    <div class="verdict-box" id="res-verdict"></div>
+    <div id="res-blocks"></div>
+    <div class="incon-block" id="res-incon"></div>
+  </div>
+
+</div>
+
+<script>
+// ===================== КОНФИГУРАЦИЯ =====================
+const WEB_APP_URL = 'ВСТАВЬТЕ_СЮДА_URL_ВЕБ_ПРИЛОЖЕНИЯ';
+const TEST_CODE = 'HR_DALIO_001';
+const PASSWORD = 'SBM';
+// ========================================================
+
+let TEST_CONFIG = null;
+let Q = [];
+let cur = 0;
+let fio = '';
+let startedAt = null;
+let answers = [];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function checkFio() {
+  const v = document.getElementById('fio-input').value.trim();
+  const ready = v.length >= 3 && Q.length > 0;
+  document.getElementById('btn-start').disabled = !ready;
+}
+
+function safeText(v) {
+  return typeof v === 'string' ? v : '';
+}
+
+async function loadTestConfig() {
+  if (!WEB_APP_URL || WEB_APP_URL.includes('ВСТАВЬТЕ_СЮДА')) {
+    throw new Error('Не указан WEB_APP_URL в HTML');
+  }
+
+  const url = `${WEB_APP_URL}?action=config&testCode=${encodeURIComponent(TEST_CODE)}`;
+  const response = await fetch(url, { method: 'GET' });
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить конфиг теста. HTTP ${response.status}`);
+  }
+
+  const json = await response.json();
+  if (!json.ok || !json.data) {
+    throw new Error(json.error || 'Пустой ответ API');
+  }
+
+  return json.data;
+}
+
+function updateIntroFromConfig(config) {
+  const titleEl = document.getElementById('intro-title');
+  const descEl = document.getElementById('intro-desc');
+  const blocksEl = document.getElementById('blocks-row');
+
+  if (titleEl) titleEl.textContent = safeText(config.intro_title || config.test_name || 'Оценочный тест');
+  if (descEl) descEl.textContent = safeText(config.intro_desc || '');
+
+  const sectionStyles = {
+    v: { color: 'var(--v)' },
+    a: { color: 'var(--a)' },
+    sk: { color: 'var(--s)' }
+  };
+
+  if (blocksEl && Array.isArray(config.sections) && config.sections.length) {
+    blocksEl.innerHTML = config.sections.map(section => {
+      const st = sectionStyles[section.section_code] || { color: 'var(--ink)' };
+      return `
+        <div class="block-card" style="border-left: 2px solid ${st.color};">
+          <div class="bt" style="color:${st.color}">${escapeHtml(section.section_name || '')}</div>
+          <div class="bd">${escapeHtml(section.description || '')}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+async function initApp() {
+  addHrButton();
+
+  try {
+    TEST_CONFIG = await loadTestConfig();
+    Q = (TEST_CONFIG.questions || []).slice().sort((a, b) => Number(a.order_no) - Number(b.order_no));
+    answers = new Array(Q.length).fill(null);
+
+    updateIntroFromConfig(TEST_CONFIG);
+    checkFio();
+  } catch (error) {
+    console.error(error);
+    document.getElementById('intro-desc').textContent =
+      'Не удалось загрузить тест. Проверьте WEB_APP_URL в HTML и доступность веб-приложения.';
+    document.getElementById('btn-start').disabled = true;
+    alert(error.message);
+  }
+}
+
+function startTest() {
+  fio = document.getElementById('fio-input').value.trim();
+  if (fio.length < 3) return;
+  if (!Q.length) {
+    alert('Конфиг теста ещё не загружен.');
+    return;
+  }
+  startedAt = Date.now();
+  cur = 0;
+  show('screen-test');
+  renderQ();
+}
+
+function renderQ() {
+  const q = Q[cur];
+  if (!q) return;
+
+  document.getElementById('q-label').textContent = 'Вопрос ' + (cur + 1) + ' из ' + Q.length;
+  document.getElementById('progress-fill').style.width = ((cur + 1) / Q.length * 100) + '%';
+
+  const smap = {
+    v: ['Ценности', 'tag-v'],
+    a: ['Способности', 'tag-a'],
+    sk: ['Навыки', 'tag-s']
+  };
+  const tagInfo = smap[q.section_code] || ['Раздел', ''];
+
+  const tag = document.getElementById('section-tag');
+  tag.textContent = tagInfo[0];
+  tag.className = 'section-tag ' + tagInfo[1];
+  document.getElementById('q-section-text').textContent = tagInfo[0];
+  document.getElementById('q-text').textContent = q.question_text || '';
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+
+  (q.options || []).forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (answers[cur] === opt.option_id ? ' selected' : '');
+    b.textContent = opt.option_text;
+    b.onclick = () => {
+      answers[cur] = opt.option_id;
+      renderQ();
+    };
+    opts.appendChild(b);
+  });
+
+  document.getElementById('btn-prev').disabled = cur === 0;
+
+  const nb = document.getElementById('btn-next');
+  if (cur === Q.length - 1) {
+    nb.textContent = 'Завершить тест';
+    nb.onclick = finishTest;
+  } else {
+    nb.textContent = 'Далее →';
+    nb.onclick = nextQ;
+  }
+}
+
+function nextQ() {
+  if (answers[cur] === null) {
+    alert('Пожалуйста, выберите ответ');
+    return;
+  }
+  if (cur < Q.length - 1) {
+    cur++;
+    renderQ();
+  }
+}
+
+function prevQ() {
+  if (cur > 0) {
+    cur--;
+    renderQ();
+  }
+}
+
+function collectAnswers() {
+  return Q.map((q, i) => ({
+    question_id: q.question_id,
+    option_id: answers[i]
+  })).filter(x => x.option_id);
+}
+
+function getDurationSec() {
+  if (!startedAt) return 0;
+  return Math.round((Date.now() - startedAt) / 1000);
+}
+
+function finishTest() {
+  if (answers[cur] === null) {
+    alert('Пожалуйста, выберите ответ');
+    return;
+  }
+  show('screen-saving');
+
+  const payload = {
+    action: 'submit',
+    test_code: TEST_CODE,
+    candidate_name: fio,
+    candidate_email: '',
+    vacancy_code: '',
+    source: 'web-html',
+    duration_sec: getDurationSec(),
+    answers: collectAnswers()
+  };
+
+  submitResults(payload);
+}
+
+async function submitResults(payload) {
+  const localResult = buildLocalResult(payload);
+
+  try {
+    const response = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await response.text();
+    const json = JSON.parse(text);
+
+    if (!json.ok) {
+      throw new Error(json.error || 'Сервер вернул ошибку');
+    }
+
+    const normalized = normalizeServerResult(json.data, payload);
+    sessionStorage.setItem('hr_result', JSON.stringify(normalized));
+    show('screen-done');
+  } catch (error) {
+    console.error('POST submit failed, using local fallback:', error);
+    sessionStorage.setItem('hr_result', JSON.stringify(localResult));
+    show('screen-done');
+    addDownloadButton(localResult);
+  }
+}
+
+function normalizeServerResult(data, payload) {
+  const score = data && data.score ? data.score : {};
+  return {
+    fio: payload.candidate_name || '',
+    total: Number(score.total_score || 0),
+    level: score.level_name || '',
+    level_code: score.level_code || '',
+    verdict: score.verdict || '',
+    vPct: Number((score.section_pct && score.section_pct.v) || 0),
+    aPct: Number((score.section_pct && score.section_pct.a) || 0),
+    sPct: Number((score.section_pct && score.section_pct.sk) || 0),
+    inconsistencies: Array.isArray(score.inconsistencies) ? score.inconsistencies : [],
+    answers: payload.answers || [],
+    submission_id: data && data.submission_id ? data.submission_id : ''
+  };
+}
+
+function buildLocalResult(payload) {
+  const sectionMap = {};
+  (TEST_CONFIG.sections || []).forEach(s => {
+    sectionMap[s.section_code] = { sum: 0, count: 0, weight: Number(s.weight || 0) };
+  });
+
+  const answerByQuestion = {};
+  Q.forEach((q, i) => {
+    const selectedId = answers[i];
+    if (!selectedId) return;
+    const opt = (q.options || []).find(x => x.option_id === selectedId);
+    if (!opt) return;
+
+    answerByQuestion[q.question_id] = { score: Number(opt.score || 0), option_id: selectedId };
+    if (!sectionMap[q.section_code]) {
+      sectionMap[q.section_code] = { sum: 0, count: 0, weight: 0 };
+    }
+    sectionMap[q.section_code].sum += Number(opt.score || 0);
+    sectionMap[q.section_code].count += 1;
+  });
+
+  const vPct = pctFromSection(sectionMap.v);
+  const aPct = pctFromSection(sectionMap.a);
+  const sPct = pctFromSection(sectionMap.sk);
+
+  const total = Math.round(
+    vPct * Number((sectionMap.v && sectionMap.v.weight) || 0) +
+    aPct * Number((sectionMap.a && sectionMap.a.weight) || 0) +
+    sPct * Number((sectionMap.sk && sectionMap.sk.weight) || 0)
+  );
+
+  const level = (TEST_CONFIG.levels || []).find(l => total >= Number(l.min_score) && total <= Number(l.max_score)) || {};
+
+  const inconsistencies = ((TEST_CONFIG.inconsistencies || []).reduce((acc, rule) => {
+    const a1 = answerByQuestion[rule.question_id_1];
+    const a2 = answerByQuestion[rule.question_id_2];
+    if (!a1 || !a2) return acc;
+    if (Math.abs(Number(a1.score) - Number(a2.score)) >= Number(rule.threshold || 2)) {
+      acc.push(`Расхождение: «${rule.descriptor_1}» vs «${rule.descriptor_2}»`);
+    }
+    return acc;
+  }, []));
+
+  return {
+    fio: payload.candidate_name || '',
+    total,
+    level: level.level_name || '',
+    level_code: level.level_code || '',
+    verdict: level.verdict || '',
+    vPct,
+    aPct,
+    sPct,
+    inconsistencies,
+    answers: payload.answers || []
+  };
+}
+
+function pctFromSection(bucket) {
+  if (!bucket || !bucket.count) return 0;
+  return Math.round(bucket.sum / (bucket.count * 3) * 100);
+}
+
+function addDownloadButton(result) {
+  const doneWrap = document.querySelector('#screen-done .done-wrap');
+  if (!doneWrap || doneWrap.querySelector('[data-hr-download="1"]')) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'btn-start';
+  btn.dataset.hrDownload = '1';
+  btn.style.marginTop = '1.5rem';
+  btn.textContent = 'Скачать результаты (HR)';
+  btn.onclick = () => {
+    const pwd = prompt('Введите пароль:');
+    if (pwd === PASSWORD) {
+      downloadResult(result);
+    } else {
+      alert('Неверный пароль');
+    }
+  };
+  doneWrap.appendChild(btn);
+}
+
+function downloadResult(result) {
+  const lines = [
+    '=== ОТЧЁТ HR-ТЕСТА ===',
+    'Дата: ' + new Date().toLocaleString('ru-RU'),
+    'ФИО: ' + result.fio,
+    '',
+    '--- ИТОГ ---',
+    'Общий балл: ' + result.total + '%',
+    'Уровень: ' + result.level,
+    'Вердикт: ' + result.verdict,
+    '',
+    '--- БЛОКИ ---',
+    'Ценности: ' + result.vPct + '% ' + vInsight(result.vPct),
+    'Способности: ' + result.aPct + '% ' + aInsight(result.aPct),
+    'Навыки: ' + result.sPct + '% ' + sInsight(result.sPct),
+    '',
+    '--- ПРОТИВОРЕЧИЯ ---',
+    result.inconsistencies && result.inconsistencies.length ? result.inconsistencies.join('\n') : 'Не выявлено',
+    '',
+    '--- СЫРЫЕ ОТВЕТЫ ---',
+    JSON.stringify(result.answers, null, 2)
+  ];
+  const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'hr_result_' + (result.fio || 'candidate').replace(/\s+/g,'_') + '.txt';
+  a.click();
+}
+
+function vInsight(p) {
+  if (p >= 80) return '— Сильная этическая позиция. Отстаивает принципы при давлении, действует последовательно.';
+  if (p >= 60) return '— В целом надёжные ценности, но в ряде ситуаций заметна склонность к компромиссу ради комфорта.';
+  return '— Ценностная позиция нестабильна. В сложных ситуациях принципы уступают ситуативным соображениям.';
+}
+function aInsight(p) {
+  if (p >= 80) return '— Высокий аналитический уровень. Работает с данными, задаёт правильные вопросы, держит неопределённость.';
+  if (p >= 60) return '— Хорошее практическое мышление, но есть склонность к шаблонным решениям.';
+  return '— Мышление преимущественно реактивное. Сложные ситуации решаются без глубокого анализа.';
+}
+function sInsight(p) {
+  if (p >= 80) return '— Сильный набор навыков: структурированный подход к найму, данным, stakeholder management.';
+  if (p >= 60) return '— Основные навыки развиты, но в нестандартных ситуациях заметна неуверенность.';
+  return '— Навыки требуют развития. Решения нередко интуитивны без опоры на методологию.';
+}
+
+function addHrButton() {
+  const doneWrap = document.querySelector('#screen-done .done-wrap');
+  if (!doneWrap || doneWrap.querySelector('[data-hr-open="1"]')) return;
+
+  const hrBtn = document.createElement('div');
+  hrBtn.dataset.hrOpen = '1';
+  hrBtn.style.cssText = 'margin-top:2rem;';
+  hrBtn.innerHTML = '<button class="btn-nav" onclick="openResults()" style="font-size:12px;color:var(--ink3);border-color:var(--line);">Просмотр результатов</button>';
+  doneWrap.appendChild(hrBtn);
+}
+
+function openResults() {
+  show('screen-results');
+  document.getElementById('pwd-overlay').style.display = 'flex';
+}
+
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('pwd-overlay').style.display = 'none';
+    const stored = sessionStorage.getItem('hr_result');
+    if (stored) {
+      renderResults(JSON.parse(stored));
+    } else {
+      document.getElementById('res-verdict').textContent = 'Локальных результатов нет. Вероятно, они отправлены только в Google Таблицу.';
+    }
+  } else {
+    document.getElementById('pwd-error').textContent = 'Неверный пароль';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+
+function renderResults(r) {
+  document.getElementById('res-fio').textContent = r.fio || '';
+  document.getElementById('res-total').textContent = (r.total || 0) + '%';
+  document.getElementById('res-level').textContent = r.level || '';
+  document.getElementById('res-verdict').textContent = r.verdict || '';
+
+  const blocks = [
+    {title:'Ценности', pct:Number(r.vPct || 0), color:'var(--v)', bg:'#EEEAF8', insight:vInsight(Number(r.vPct || 0))},
+    {title:'Способности', pct:Number(r.aPct || 0), color:'var(--a)', bg:'#E4F0E8', insight:aInsight(Number(r.aPct || 0))},
+    {title:'Навыки', pct:Number(r.sPct || 0), color:'var(--s)', bg:'#F5EAE7', insight:sInsight(Number(r.sPct || 0))}
+  ];
+
+  document.getElementById('res-blocks').innerHTML = blocks.map(b => `
+    <div class="block-result">
+      <div class="br-head" style="background:${b.bg}">
+        <span class="br-title" style="color:${b.color}">${b.title}</span>
+        <span class="br-pct" style="color:${b.color}">${b.pct}%</span>
+      </div>
+      <div class="br-bar"><div class="br-fill" style="width:${b.pct}%;background:${b.color}"></div></div>
+      <div class="br-body">${b.insight}</div>
+    </div>
+  `).join('');
+
+  const ib = document.getElementById('res-incon');
+  if (r.inconsistencies && r.inconsistencies.length) {
+    ib.innerHTML = '<p class="incon-title">Выявленные противоречия</p>' +
+      r.inconsistencies.map(i => `<div class="incon-item">${escapeHtml(i)}</div>`).join('');
+  } else {
+    ib.innerHTML = '<p class="incon-title" style="color:var(--a)">Явных противоречий не выявлено</p>';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
